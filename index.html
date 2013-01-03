@@ -7,12 +7,15 @@
 	<body>
 		<div id="formContainer">
 			<div id="regForm">
-				<form>
-					
-						First name: <div class="wrapEl"><input type="text" name="firstname" id="fName" class="regfields"></div><br><br>
-						Last name: <input type="text" name="lastname" id="lName" class="regfields">
-					
+				<form class="form"  method="post">
+					 <p class="heading">REGISTRATION</p>
+					 <input type="text" name="firstname" id="fName" class="regfields" placeholder="First Name">
+					 <input type="text" name="lastname" id="lName" class="regfields" placeholder="Last Name">
+					 <input type="text" name="email" id="lName" class="regfields" placeholder="Email">
+					 <input type="text" name="username" id="fName" class="regfields" placeholder="User Name">
+					 <div id="regSubmit" class="myButton clearLeft" data-submit="regErrors">Submit</div>
 				</form>
+				<div id="regErrors"></div>
 			</div>
 		</div>
 	</body>
