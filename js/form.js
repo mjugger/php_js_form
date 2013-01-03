@@ -23,11 +23,10 @@ var projectForm = {
 	
 	initListeners:function(){
 		$('#regSubmit').click(function(){
-			if(projectForm.errorCheck(projectForm.globals.regFields)){
-				return false;
-			}else {
+			if(!projectForm.errorCheck(projectForm.globals.regFields)){
 				projectForm.callHelper();
 			}
+			return false;
 		});
 	},
 	
@@ -39,9 +38,16 @@ var projectForm = {
 	
 	},
 	
-	fieldHilight:function(field){
-		if(!(' ' + field.className + ' ').indexOf(' incorrectfield ') > -1){
+	addHilight:function(field){
+		if(!field.className.match('incorrectfield')){
 			field.className+=' incorrectfield';
+		}
+	},
+	
+	removeHilight:function(field){
+		
+		if(field.className.match('incorrectfield')){
+			field.className = field.className.replace('incorrectfield','');
 		}
 	},
 	
@@ -82,9 +88,12 @@ var projectForm = {
 		}else{
 			errorCode = val.name+' '+this.globals.errors[5]+'<br>';
 		}
-		
-		this.fieldHilight(val);
-		return errorCode;
+		if(errorCode !== ''){
+			this.addHilight(val);
+		}else {
+			this.removeHilight(val);
+		}
+			return errorCode;
 	},
 	
 	validateJson:function(){
