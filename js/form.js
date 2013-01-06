@@ -2,7 +2,6 @@
 
 var projectForm = {
 	globals:{
-		responceJson:null, // Holds the json from the server.
 		regFields: document.getElementsByClassName('regfields'),
 		loginFields: null,
 		submitBtnId:'', // The id of the clicked submit button.
@@ -18,20 +17,35 @@ var projectForm = {
 				'Passcode does not match our records.',
 				'Not entered',
 				'The email you entered has an incorrect format',
-				'Field cannot use special characters (i.e. ~ ! # $ % ^ & * etc...)']
+				'Field cannot use special characters (i.e. ~ ! # $ % ^ & * etc...)'
+			]
 	},
 	
 	initListeners:function(){
 		$('#regSubmit').click(function(){
-			if(!projectForm.errorCheck(projectForm.globals.regFields)){
-				projectForm.callHelper();
+		if(!projectForm.errorCheck(projectForm.globals.regFields)){
+				projectForm.callHelper(projectForm.globals.regFields);
 			}
 			return false;
 		});
 	},
 	
-	callHelper:function(){
-		
+	callHelper:function(fields){
+		$.ajax({
+     		 url: 'helpers/messenger.php', 
+      		data: {
+      			firstname:projectForm.globals.regFields[0].value,
+      			lastname: projectForm.globals.regFields[1].value,
+      			email:projectForm.globals.regFields[2].value,
+      			username:projectForm.globals.regFields[3].value
+      		},
+      		type: 'POST',
+      		dataType: 'json',
+
+      		success: function(data) {
+         		projectForm.validateJson(data);
+      		}
+   		});
 	},
 	
 	switchViews:function(){
@@ -66,7 +80,7 @@ var projectForm = {
 		}
 	},
 	
-	validateField:function(val){
+	validateField:function(val){ // used to validate before going to the server.
 		var errorCode = '';
 		if(val.value !== ''){
 			if(val.name == 'email'){
@@ -96,8 +110,25 @@ var projectForm = {
 			return errorCode;
 	},
 	
-	validateJson:function(){
-		
+	validateJson:function(json){ // validates the json returned from the server.
+		var serverErrors = '';
+		if(json.username_error){
+			if(this.globals.errors[1].match('@username')){
+				var name = this.globals.errors[1].replace('@username',projectForm.globals.regFields[3].value);
+				this.addHilight(projectForm.globals.regFields[3]);
+				name+='<br>';
+			}
+			serverErrors+= name;
+		}else{
+			this.removeHilight(projectForm.globals.regFields[3]);
+		}
+		if(json.email_error){
+			serverErrors+= this.globals.errors[0]+'<br>';
+			this.addHilight(projectForm.globals.regFields[2]);
+		}else{
+			this.removeHilight(projectForm.globals.regFields[2]);
+		}
+		this.errorDisplay(serverErrors);
 	},
 	
 	errorDisplay:function(errorTxt){
