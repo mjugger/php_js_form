@@ -31,10 +31,19 @@ class model{
 				}
 			}
 		}
-
+		if (count($json) == 0) {
+			$this->enterRecord($db,$data);
+			return false;
+		}
 		return json_encode($json);
 	}
 
-	private function enterRecord($userRecord){}
+	private function enterRecord($db,$data){
+		if($stmt = $db->prepare('insert into register (username,firstname,lastname,email) values (?,?,?,?)')){
+			$stmt->bind_param('ssss',$data['username'],$data['firstname'],$data['lastname'],$data['email']);
+			$stmt->execute();
+			$stmt->store_result();
+		}
+	}
 }
 ?>

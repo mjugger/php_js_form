@@ -112,21 +112,25 @@ var projectForm = {
 	
 	validateJson:function(json){ // validates the json returned from the server.
 		var serverErrors = '';
-		if(json.username_error){
-			if(this.globals.errors[1].match('@username')){
-				var name = this.globals.errors[1].replace('@username',projectForm.globals.regFields[3].value);
-				this.addHilight(projectForm.globals.regFields[3]);
-				name+='<br>';
+		if (json) {
+			if(json.username_error){
+				if(this.globals.errors[1].match('@username')){
+					var name = this.globals.errors[1].replace('@username',projectForm.globals.regFields[3].value);
+					this.addHilight(projectForm.globals.regFields[3]);
+					name+='<br>';
+				}
+				serverErrors+= name;
+			}else{
+				this.removeHilight(projectForm.globals.regFields[3]);
 			}
-			serverErrors+= name;
+			if(json.email_error){
+				serverErrors+= this.globals.errors[0]+'<br>';
+				this.addHilight(projectForm.globals.regFields[2]);
+			}else{
+				this.removeHilight(projectForm.globals.regFields[2]);
+			}
 		}else{
-			this.removeHilight(projectForm.globals.regFields[3]);
-		}
-		if(json.email_error){
-			serverErrors+= this.globals.errors[0]+'<br>';
-			this.addHilight(projectForm.globals.regFields[2]);
-		}else{
-			this.removeHilight(projectForm.globals.regFields[2]);
+			serverErrors+='registration was successful.'
 		}
 		this.errorDisplay(serverErrors);
 	},
