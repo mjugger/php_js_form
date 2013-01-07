@@ -7,7 +7,7 @@ var projectForm = {
 		submitBtnId:'', // The id of the clicked submit button.
 		myRegExps:{
 			email:/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/,
-			symbols:/[^0-9a-z]/,
+			symbols:/[^0-9a-zA-Z]/,
 			numbers:/[0-9]/
 		},
 		errors:['This Email is already registered.',
@@ -17,28 +17,34 @@ var projectForm = {
 				'Passcode does not match our records.',
 				'Not entered',
 				'The email you entered has an incorrect format',
-				'Field cannot use special characters (i.e. ~ ! # $ % ^ & * etc...)'
+				'Field cannot use special characters (i.e. ~ ! # $ % ^ & * etc...)',
+				'The username and/or passcode you entered are incorrect.'
 			]
 	},
 	
 	initListeners:function(){
 		$('#regSubmit').click(function(){
 		if(!projectForm.errorCheck(projectForm.globals.regFields)){
-				projectForm.callHelper(projectForm.globals.regFields);
+				var postPackage = projectForm.postobjConstruct(projectForm.globals.regFields);
+				projectForm.callHelper(postPackage);
 			}
 			return false;
 		});
 	},
 	
-	callHelper:function(fields){
+	postobjConstruct:function(fields){
+		var postObj = {};
+		var fieldSize = fields.length;
+		for(var i = 0; i < fieldSize; i++){
+			postObj[fields[i].name] = fields[i].value;
+		}
+		return postObj;
+	},
+	
+	callHelper:function(postPack){
 		$.ajax({
      		 url: 'helpers/messenger.php', 
-      		data: {
-      			firstname:projectForm.globals.regFields[0].value,
-      			lastname: projectForm.globals.regFields[1].value,
-      			email:projectForm.globals.regFields[2].value,
-      			username:projectForm.globals.regFields[3].value
-      		},
+      		data: postPack,
       		type: 'POST',
       		dataType: 'json',
 
@@ -113,6 +119,13 @@ var projectForm = {
 	validateJson:function(json){ // validates the json returned from the server.
 		var serverErrors = '';
 		if (json) {
+			if(json.login_error){
+				serverErrors+= this.globals.errors[8];
+				this.addHilight(projectForm.globals.loginFields[0]);
+				this.addHilight(projectForm.globals.loginFields[1]);
+			}else{
+				
+			}
 			if(json.username_error){
 				if(this.globals.errors[1].match('@username')){
 					var name = this.globals.errors[1].replace('@username',projectForm.globals.regFields[3].value);
