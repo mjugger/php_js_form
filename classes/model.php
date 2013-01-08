@@ -1,6 +1,13 @@
 <?php
+require '../externalClasses/PasswordHash.php';
+
 class model{
-	public function __construct(){}
+
+	private $hasher; //Used for Passcode incoding via the external class "Passcode Hash" (Blowfish-based bcrypt).
+
+	public function __construct(){
+		$this->hasher  = new PasswordHash(8,false);
+	}
 
 	public function mysqlConnect($data){
 		$mysqli = mysqli_connect("localhost", "root", "", "users");
@@ -51,10 +58,25 @@ class model{
 		}
 		return json_encode($json);
 	}
+	
+	private function incodePasscode($passcode){
+		
+		return $this->hasher->HashPassword($passcode);
+	}
 
+	private function comparePasscode($userPass,$storedPass){
+		$compare = $this->hasher->CheckPassword($userPass,$storedPass);
+		if($compare){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	private function enterRecord($db,$data){
-		if($stmt = $db->prepare('insert into register (username,firstname,lastname,email) values (?,?,?,?)')){
-			$stmt->bind_param('ssss',$data['username'],$data['firstname'],$data['lastname'],$data['email']);
+		if($stmt = $db->prepare('insert into register (username,firstname,lastname,email,passcode) values (?,?,?,?,?)')){
+			$secure_pass = $this->incodePasscode($data['passcode']);
+			$stmt->bind_param('sssss',$data['username'],$data['firstname'],$data['lastname'],$data['email'],$secure_pass);
 			$stmt->execute();
 			$stmt->close();
 		}

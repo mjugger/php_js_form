@@ -18,9 +18,7 @@ body {
 	overflow-x: hidden;
 }
 
-.form input[type=text]{
-	padding-left: 10px;
-}
+
 
 .regfields {
 	width: 150px;
@@ -34,6 +32,7 @@ body {
 	float: left;
 	margin-bottom: 10px;
 	margin-left: 5px;
+	padding-left: 10px;
 }
 
 .fset {
@@ -59,7 +58,7 @@ body {
 
 #regForm {
 	width: 400px;
-	height: 250px;
+	height: 350px;
 	position: relative;
 	margin: auto;
 	
@@ -69,7 +68,7 @@ body {
 	position: absolute;
 	bottom: 0px;
 	width: 400px;
-	height: 85px;
+	min-height: 85px;
 }
 
 .incorrectField {

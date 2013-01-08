@@ -18,7 +18,11 @@ var projectForm = {
 				'Not entered',
 				'The email you entered has an incorrect format',
 				'Field cannot use special characters (i.e. ~ ! # $ % ^ & * etc...)',
-				'The username and/or passcode you entered are incorrect.'
+				'The username and/or passcode you entered are incorrect.',
+				'The Passcodes don\'t match. Please try again',
+				'Your Passcode is to short',
+				'Your Passcode is to long',
+				'Your Passcode should be between 5 and 9 characters.'
 			]
 	},
 	
@@ -36,7 +40,7 @@ var projectForm = {
 		var postObj = {};
 		var fieldSize = fields.length;
 		for(var i = 0; i < fieldSize; i++){
-			postObj[fields[i].name] = fields[i].value;
+			postObj[fields[i].name] = String(fields[i].value);
 		}
 		return postObj;
 	},
@@ -104,6 +108,8 @@ var projectForm = {
 				if(val.value.match(this.globals.myRegExps.symbols)){
 					errorCode += val.name+' '+this.globals.errors[7]+'<br>';
 				}
+			}else if(val.name == 'passcode' || val.name == 'passcode_check'){
+				errorCode+=this.validatePasscode(val);
 			}
 		}else{
 			errorCode = val.name+' '+this.globals.errors[5]+'<br>';
@@ -114,6 +120,19 @@ var projectForm = {
 			this.removeHilight(val);
 		}
 			return errorCode;
+	},
+	
+	validatePasscode:function(passField){
+		var passErrors = '';
+		if(this.globals.regFields[5].value !== passField.value){
+			passErrors+=this.globals.errors[9]+'<br>';
+		}
+		if(String(passField.value).length < 5){
+			passErrors+=this.globals.errors[10]+' '+this.globals.errors[12]+'<br>';
+		}else if(String(passField.value).length > 9){
+			passErrors+=this.globals.errors[11]+' '+passErrors+=this.globals.errors[12]+'<br>';
+		}
+		return passErrors;
 	},
 	
 	validateJson:function(json){ // validates the json returned from the server.
