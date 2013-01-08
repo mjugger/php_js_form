@@ -8,7 +8,7 @@ class model{
     		return "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
 		$jsonResponce = $this->validateRecord($mysqli,$data);
-		$mysqli -> close();
+		$mysqli->close();
 		return $jsonResponce;
 	}
 
