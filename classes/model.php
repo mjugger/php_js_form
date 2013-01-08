@@ -14,7 +14,7 @@ class model{
 
 	private function validateRecord($db,$data){
 		$json = array();
-		if($data['login_pass']){
+		if(isset($data['login_pass'])){
 			if($stmt = $db->prepare('select username,passcode from register where username = ? and passcode = ?')){
 				$stmt->bind_param('ss',$data['login_user'],$data['login_pass']);
 				$stmt->execute();
