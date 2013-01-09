@@ -2,10 +2,6 @@
 
 var projectForm = {
 	globals:{
-		regFields: document.getElementsByClassName('regfields'),
-		loginFields: document.getElementsByClassName('logfields'),
-		lostField: document.getElementsByClassName('lostfields'),
-		submitBtnId:'', // The id of the clicked submit button.
 		myRegExps:{
 			email:/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/,
 			symbols:/[^0-9a-zA-Z]/,
@@ -28,8 +24,8 @@ var projectForm = {
 	},
 	
 	initListeners:function(){
-		$('#regSubmit').click(function(){
-			if(!projectForm.errorCheck(projectForm.globals.regFields)){
+		$(this.Class('myButton')).click(function(){
+			if(!projectForm.errorCheck(projectForm.Class('regFields'))){
 				var postPackage = projectForm.postobjConstruct(projectForm.Class('regFields'));
 				projectForm.callHelper(postPackage);
 			}
