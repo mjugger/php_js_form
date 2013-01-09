@@ -3,7 +3,8 @@
 var projectForm = {
 	globals:{
 		regFields: document.getElementsByClassName('regfields'),
-		loginFields: null,
+		loginFields: document.getElementsByClassName('logfields'),
+		lostField: document.getElementsByClassName('lostfields'),
 		submitBtnId:'', // The id of the clicked submit button.
 		myRegExps:{
 			email:/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/,
@@ -28,11 +29,14 @@ var projectForm = {
 	
 	initListeners:function(){
 		$('#regSubmit').click(function(){
-		if(!projectForm.errorCheck(projectForm.globals.regFields)){
-				var postPackage = projectForm.postobjConstruct(projectForm.globals.regFields);
+			if(!projectForm.errorCheck(projectForm.globals.regFields)){
+				var postPackage = projectForm.postobjConstruct(projectForm.Class('regFields'));
 				projectForm.callHelper(postPackage);
 			}
 			return false;
+		});
+		$(this.Class('exBtn')).click(function(){
+			projectForm.switchViews($(this).attr('id'));
 		});
 	},
 	
@@ -58,8 +62,36 @@ var projectForm = {
    		});
 	},
 	
-	switchViews:function(){
+	switchViews:function(id){
+	this.errorDisplay('');
+		switch(id){
+			case 'gotoLogin':
+				this.animateGrid({y:'0px'});
+				break;
+			case 'gotoLogin2':
+				this.animateGrid({x:'0px'});
+				break;
+			case 'gotoRegister':
+				this.animateGrid({y:'-350px'});
+				break;
+			case 'gotoRetrieve':
+				this.animateGrid({x:'-400px'});
+				break;
+			case 'successUp':
+				this.animateGrid({y:'-350px'});
+				break;
+			case 'successLeft':
+				this.animateGrid({x:'-400px'});
+				break;
+		}
+	},
 	
+	animateGrid:function(gridXY){
+		if(gridXY.x){
+			$(this.id('formGrid')).animate({left:gridXY.x},500);
+		}else if(gridXY.y){
+			$(this.id('formGrid')).animate({bottom:gridXY.y},500);
+		}
 	},
 	
 	addHilight:function(field){
@@ -124,7 +156,7 @@ var projectForm = {
 	
 	validatePasscode:function(passField){
 		var passErrors = '';
-		if(this.globals.regFields[5].value !== passField.value){
+		if(this.Class('regFields')[5].value !== passField.value){
 			passErrors+=this.globals.errors[9]+'<br>';
 		}
 		if(String(passField.value).length < 5){
@@ -140,26 +172,26 @@ var projectForm = {
 		if (json) {
 			if(json.login_error){
 				serverErrors+= this.globals.errors[8];
-				this.addHilight(projectForm.globals.loginFields[0]);
-				this.addHilight(projectForm.globals.loginFields[1]);
+				this.addHilight(projectForm.Class('loginFields')[0]);
+				this.addHilight(projectForm.Class('loginFields')[1]);
 			}else{
 				
 			}
 			if(json.username_error){
 				if(this.globals.errors[1].match('@username')){
-					var name = this.globals.errors[1].replace('@username',projectForm.globals.regFields[3].value);
-					this.addHilight(projectForm.globals.regFields[3]);
+					var name = this.globals.errors[1].replace('@username',projectForm.Class('regFields')[3].value);
+					this.addHilight(projectForm.Class('regFields')[3]);
 					name+='<br>';
 				}
 				serverErrors+= name;
 			}else{
-				this.removeHilight(projectForm.globals.regFields[3]);
+				this.removeHilight(projectForm.Class('regFields')[3]);
 			}
 			if(json.email_error){
 				serverErrors+= this.globals.errors[0]+'<br>';
-				this.addHilight(projectForm.globals.regFields[2]);
+				this.addHilight(projectForm.Class('regFields')[2]);
 			}else{
-				this.removeHilight(projectForm.globals.regFields[2]);
+				this.removeHilight(projectForm.Class('regFields')[2]);
 			}
 		}else{
 			serverErrors+='registration was successful.'
@@ -196,10 +228,17 @@ var projectForm = {
   		}
   		return this.cache.id[id];
 	},
+	
+	Class:function(Class) {//caches and returns an array of elements matching the "Class" argument.
+  		if(this.cache.classes[Class] === undefined) {
+    		this.cache.classes[Class] = document.getElementsByClassName(Class) || false;
+  		}
+  		return this.cache.classes[Class];
+	},
     
     cache:{
     	id:{},
-    	classes:{}//TODO: add support for caching classes.
+    	classes:{}
     }
 }
 
