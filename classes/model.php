@@ -22,13 +22,24 @@ class model{
 	private function validateRecord($db,$data){
 		$json = array();
 		if(isset($data['login_pass'])){
-			if($stmt = $db->prepare('select username,passcode from register where username = ? and passcode = ?')){
-				$stmt->bind_param('ss',$data['login_user'],$data['login_pass']);
+			if($stmt = $db->prepare('select passcode from register where username = ?')){
+				$stmt->bind_param('s',$data['login_user']);
 				$stmt->execute();
 				$stmt->store_result();
-				if($stmt->num_rows > 0){
-					$json['login_error'] = true;
+				$stmt->bind_result($pass);
+				if($stmt->num_rows == 0){
+					$json['login_error'] = 0;
+				}else if($stmt->num_rows > 0){
+					while($stmt->fetch()){
+						if($this->comparePasscode($data['login_pass'],$pass)){
+							$json['url'] = "http://www.google.com";
+						}else{
+							$json['login_error'] = 1;
+						}
+						
+					}
 				}
+				$stmt->free_result();
 				$stmt->close();
 			}
 		}else{
@@ -39,6 +50,7 @@ class model{
 				if($stmt2->num_rows > 0){
 					$json['username_error'] = true;
 				}
+				$stmt2->free_result();
 				$stmt2->close();
 			}
 		
@@ -49,6 +61,7 @@ class model{
 				if($stmt3->num_rows > 0){
 					$json['email_error'] = true;
 				}
+				$stmt3->free_result();
 				$stmt3->close();
 			
 			}

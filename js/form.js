@@ -25,9 +25,16 @@ var projectForm = {
 	
 	initListeners:function(){
 		$(this.Class('myButton')).click(function(){
-			if(!projectForm.errorCheck(projectForm.Class('regFields'))){
-				var postPackage = projectForm.postobjConstruct(projectForm.Class('regFields'));
-				projectForm.callHelper(postPackage);
+			if(this.id === 'regSubmit'){
+				if(!projectForm.errorCheck(projectForm.Class('regFields'))){
+					var postPackage = projectForm.postobjConstruct(projectForm.Class('regFields'));
+					projectForm.callHelper(postPackage);
+				}
+			}else if(this.id === 'logSubmit'){
+				if(!projectForm.errorCheck(projectForm.Class('logFields'))){
+					var postPackage = projectForm.postobjConstruct(projectForm.Class('logFields'));
+					projectForm.callHelper(postPackage);
+				}
 			}
 			return false;
 		});
