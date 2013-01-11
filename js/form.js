@@ -35,6 +35,11 @@ var projectForm = {
 					var postPackage = projectForm.postobjConstruct(projectForm.Class('logFields'));
 					projectForm.callHelper(postPackage);
 				}
+			}else if(this.id === 'forgotSubmit'){
+				if(!projectForm.errorCheck(projectForm.Class('lostfields'))){
+					var postPackage = projectForm.postobjConstruct(projectForm.Class('lostfields'));
+					projectForm.callHelper(postPackage);
+				}
 			}
 			return false;
 		});
@@ -128,7 +133,7 @@ var projectForm = {
 	validateField:function(val){ // used to validate before going to the server.
 		var errorCode = '';
 		if(val.value !== ''){
-			if(val.name == 'email'){
+			if(val.name == 'email' || val.name == 'lostlogin'){
 				if(!val.value.match(this.globals.myRegExps.email)){
 					errorCode = this.globals.errors[6]+'<br>';
 				}
@@ -165,7 +170,7 @@ var projectForm = {
 		if(String(passField.value).length < 5){
 			passErrors+=this.globals.errors[10]+' '+this.globals.errors[12]+'<br>';
 		}else if(String(passField.value).length > 9){
-			passErrors+=this.globals.errors[11]+' '+passErrors+=this.globals.errors[12]+'<br>';
+			passErrors+=this.globals.errors[11]+' '+this.globals.errors[12]+'<br>';
 		}
 		return passErrors;
 	},

@@ -1,5 +1,6 @@
 <?php
 require '../externalClasses/PasswordHash.php';
+require 'email_model.php';
 
 class model{
 
@@ -42,27 +43,46 @@ class model{
 				$stmt->free_result();
 				$stmt->close();
 			}
-		}else{
-			if($stmt2 = $db->prepare('select username from register where username = ?')){
-				$stmt2->bind_param('s',$data['username']);
+		}else if(isset($data['lostLogin'])){
+			if($stmt2 = $db->prepare('select username,passcode from register where email = ?')){
+				$stmt2->bind_param('s',$data['lostLogin']);
 				$stmt2->execute();
 				$stmt2->store_result();
-				if($stmt2->num_rows > 0){
-					$json['username_error'] = true;
+				$stmt2->bind_result($username,$rawPass);
+				$em = new email_model($data['lostLogin']);
+				if($stmt2->num_rows == 0){
+					$json['retrieval_error'] = true;
+				}else{
+					$json['retrieval_success'] = true;
+					while($stmt2->fetch()){
+						$json['retrieval_success'] = $em->sendEmail($username,$rawPass);
+					}
+					
 				}
 				$stmt2->free_result();
 				$stmt2->close();
 			}
-		
-			if($stmt3 = $db->prepare('select email from register where email = ?')){
-				$stmt3->bind_param('s',$data['email']);
+		}else{
+			if($stmt3 = $db->prepare('select username from register where username = ?')){
+				$stmt3->bind_param('s',$data['username']);
 				$stmt3->execute();
 				$stmt3->store_result();
 				if($stmt3->num_rows > 0){
-					$json['email_error'] = true;
+					$json['username_error'] = true;
 				}
 				$stmt3->free_result();
 				$stmt3->close();
+			}
+		
+			if($stmt4 = $db->prepare('select email from register where email = ?')){
+				$stmt4->bind_param('s',$data['email']);
+				$stmt4->execute();
+				$stmt4->store_result();
+				if($stmt4->num_rows > 0){
+					$json['email_error'] = true;
+				}
+				$stmt4->free_result();
+				$stmt4->close();
 			
 			}
 		}
