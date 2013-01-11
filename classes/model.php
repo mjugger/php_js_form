@@ -28,7 +28,7 @@ class model{
 				$stmt->store_result();
 				$stmt->bind_result($pass);
 				if($stmt->num_rows == 0){
-					$json['login_error'] = 0;
+					$json['login_error'] = 1;
 				}else if($stmt->num_rows > 0){
 					while($stmt->fetch()){
 						if($this->comparePasscode($data['login_pass'],$pass)){

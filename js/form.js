@@ -175,10 +175,10 @@ var projectForm = {
 		if (json) {
 			if(json.login_error){
 				serverErrors+= this.globals.errors[8];
-				this.addHilight(projectForm.Class('loginFields')[0]);
-				this.addHilight(projectForm.Class('loginFields')[1]);
-			}else{
-				
+				this.addHilight(projectForm.Class('logFields')[0]);
+				this.addHilight(projectForm.Class('logFields')[1]);
+			}else if(json.url){
+				window.open(json.url,'_self');
 			}
 			if(json.username_error){
 				if(this.globals.errors[1].match('@username')){
