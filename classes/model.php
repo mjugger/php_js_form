@@ -55,7 +55,7 @@ class model{
 				}else{
 					$json['retrieval_success'] = true;
 					while($stmt2->fetch()){
-						$json['retrieval_success'] = $em->sendEmail($username,$rawPass);
+						$json['retrieval_success'] = $em->sendEmail($username);
 					}
 					
 				}
